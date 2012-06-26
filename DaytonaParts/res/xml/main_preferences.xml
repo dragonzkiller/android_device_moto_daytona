@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:title="@string/main_title">
+
+	<CheckBoxPreference
+		android:key="hdmi_audio"
+		android:summary="@string/hdmi_audio_summary"
+		android:title="@string/hdmi_audio_title"
+		android:defaultValue="false"
+	/>
+
+	<CheckBoxPreference 
+		android:key="pref_switch_storage"	
+		android:title="@string/pref_switch_storage_title"
+		android:summaryOn="@string/pref_switch_storage_summary_on"
+		android:summaryOff="@string/pref_switch_storage_summary_off" 
+	/>
+
+</PreferenceScreen>

@@ -1,0 +1,74 @@
+#-----BEGIN DAYTONA------
+ro.sf.lcd_density=240
+#RIL
+rild.libpath=/system/lib/libmoto_ril.so
+persist.ril.mux.noofchannels=8
+persist.ril.mux.ttydevice=/dev/ttyHS3
+ro.telephony.call_ring.multiple=false
+ro.telephony.call_ring.delay=500
+persist.ril.modem.ttydevice=/dev/ttySPI0
+persist.ril.modem.mode=1
+persist.ril.features=0x0C
+persist.ril.mux.retries=500
+persist.ril.mux.sleep=2
+ro.kernel.android.ril=yes
+persist.ril.pppd.start.fail.max=16
+mobiledata.interfaces=ppp0
+ro.telephony.ril.v3=datacall,signalstrength,icccarddstatus,skipbrokendatacall
+ro.cdma.data_retry_config=default_randomization=2000,0,0,120000,180000,540000,960000
+
+ro.cdma.home.operator.numeric=310004
+ro.cdma.home.operator.alpha=Verizon
+ro.cdma.homesystem=64,65,76,77,78,79,80,81,82,83
+persist.radio.cdma.min = 0
+ro.cdma.otaspnumschema=SELC,1,80,99
+ro.cdma.nbpcd=1
+ro.cdma.sms.latin_encode=true
+
+#Define TCP buffer sizes for various networks
+#ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
+net.tcp.buffersize.default 65536,131072,262144,65536,131072,262144
+net.tcp.buffersize.wifi    4095,87380,110208,4096,16384,110208
+net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
+net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
+net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
+
+# Default network type.
+# 0 -> WCDMA preferred
+ro.telephony.default_network=4
+ 
+# Time between scans in seconds. Keep it high to minimize battery drain.
+# This only affects the case in which there are remembered access points,
+# but none are in range.
+wifi.supplicant_scan_interval=30
+
+# To set wifi (AP) driver's firmware path
+ro.wifi-ap.fw-path=/system/etc/wl/sdio-g-cdc-roml-reclaim-wme-apsta-idauth-minioctl.bin
+
+ro.bt.bdaddr_path=/pds/bt/bt_bdaddr
+
+#OpenGL ES version
+ro.opengles.version = 131072
+
+# Forbid format of these partitions in mount menu :
+ro.cwm.forbid_format=/misc,/radio,/pds,/bootloader,/recovery,/efs,/preinstall
+
+# Tegra debugging
+persist.tegra.nvlog.level=4
+#persist.tegra.nvlog.14.level=5
+
+# DRM
+persist.tegra.drmlib.asfdrm=libnvdrm.so
+Drmdll.asfdrm=libnvdrm.so
+
+# Enable detailed GC data and SMP dexopt
+dalvik.vm.dexopt-flags=m=y,u=n
+
+
+persist.sys.usb.config=mass_storage
+
+# Allow people to exchange sdcard and emmc mountpoints from CMParts
+ro.vold.switchablepair=/mnt/sdcard,/mnt/emmc
+
+# CRT animation speed
+debug.sf.electron_frames=36
