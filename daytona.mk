@@ -129,9 +129,9 @@ PRODUCT_PACKAGES += \
 # Board-specific init
 PRODUCT_COPY_FILES += \
     device/moto/daytona/config/vold.fstab:system/etc/vold.fstab \
+    device/moto/daytona/config/apns-conf.xml:system/etc/apns-conf.xml \
     device/moto/daytona/init.vsnet:system/bin/init.vsnet \
     device/moto/daytona/scripts/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
-    device/moto/daytona/prebuilts/liba2dp.so:system/lib/liba2dp.so \
     #device/moto/daytona/config/media_profiles.xml:system/etc/media_profiles.xml \
     device/moto/daytona/scripts/usb_switch.sh:system/bin/usb_switch.sh
 
