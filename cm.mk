@@ -19,4 +19,4 @@ PRODUCT_NAME := cm_daytona
 PRODUCT_DEVICE := daytona
 
 ## Device fingerprint
-PRODUCT_BUILD_PROP_OVERRIDES += PRODUCT_BRAND=MOTO PRODUCT_NAME=daytona BUILD_ID=4.5.1A-DTN-130 BUILD_PRODUCT=daytona BUILD_FINGERPRINT=verizon/daytona/daytona:2.3.4/4.5.1A-DTN-150-30/0:user/release-keys PRIVATE_BUILD_DESC="daytona-user 2.3.4 4.5.1A-DTN-150-30 0 release-keys"
+PRODUCT_BUILD_PROP_OVERRIDES += PRODUCT_BRAND=MOTO PRODUCT_NAME=daytona BUILD_ID=4.5.1A-DTN-130 BUILD_PRODUCT=daytona BUILD_FINGERPRINT=verizon/daytona/daytona:4.0.4/4.5.1A-DTN-150-30/0:user/release-keys PRIVATE_BUILD_DESC="daytona-user 4.0.4 4.5.1A-DTN-150-30 0 release-keys"

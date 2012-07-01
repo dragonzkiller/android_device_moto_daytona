@@ -129,7 +129,7 @@ PRODUCT_PACKAGES += \
 # Board-specific init
 PRODUCT_COPY_FILES += \
     device/moto/daytona/config/vold.fstab:system/etc/vold.fstab \
-        device/sample/etc/apns-conf_verizon.xml:system/etc/apns-conf.xml \
+    device/sample/etc/apns-conf_verizon.xml:system/etc/apns-conf.xml \
     device/moto/daytona/init.vsnet:system/bin/init.vsnet \
     device/moto/daytona/scripts/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
     #device/moto/daytona/config/media_profiles.xml:system/etc/media_profiles.xml \
