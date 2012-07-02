@@ -44,11 +44,13 @@ TARGET_HAVE_TEGRA_ERRATA_657451 := true
 TARGET_EXTRA_CFLAGS += $(call cc-option,-mtune=cortex-a9,$(call cc-option,-mtune=cortex-a8)) $(call \
 cc-option,-mcpu=cortex-a9,$(call cc-option,-mcpu=cortex-a8))
 
-ARCH_ARM_HAVE_TLS_REGISTER := true
-
 BOARD_CUSTOM_GRAPHICS := ../../../device/moto/daytona/recovery/graphics.c
 BOARD_CUSTOM_RECOVERY_KEYMAPPING:= ../../device/moto/daytona/recovery/recovery_ui.c
 BOARD_HAS_SDCARD_INTERNAL := true
+
+#TARGET_KERNEL_SOURCE := kernel/tegra
+#TARGET_KERNEL_CONFIG := tegra_daytona_android_defconfig
+TARGET_PREBUILT_KERNEL := device/moto/daytona/kernel
 
 BOARD_KERNEL_CMDLINE :=
 BOARD_KERNEL_BASE := 0x10000000
@@ -63,7 +65,6 @@ BOARD_SYSTEMIMAGE_PARTITION_SIZE := 220772160
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 1073741824
 BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_HAS_JANKY_BACKBUFFER := true
-TARGET_PREBUILT_KERNEL := device/moto/daytona/kernel
 TARGET_USERIMAGES_USE_EXT4 := false
 # Below is a sample of how you can tweak the mount points using the board config.
 BOARD_HAS_NO_MISC_PARTITION := true
