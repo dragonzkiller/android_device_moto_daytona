@@ -538,22 +538,22 @@ service hciattach /system/bin/hciattach
 # after init.nv_common.rc. 
 
 on early-boot
-    setprop ro.FOREGROUND_APP_MEM 2048
-    setprop ro.VISIBLE_APP_MEM 3072
-    setprop ro.PERCEPTIBLE_APP_MEM 4096
-    setprop ro.HEAVY_WEIGHT_APP_MEM 4096
-    setprop ro.SECONDARY_SERVER_MEM 6144
-    setprop ro.BACKUP_APP_MEM 6144
-    setprop ro.HOME_APP_MEM 6144
-    setprop ro.HIDDEN_APP_MEM 7168
-    setprop ro.EMPTY_APP_MEM 8192
+    setprop ro.FOREGROUND_APP_MEM 2464
+    setprop ro.VISIBLE_APP_MEM 3712
+    setprop ro.PERCEPTIBLE_APP_MEM 5632
+    setprop ro.HEAVY_WEIGHT_APP_MEM 5632
+    setprop ro.SECONDARY_SERVER_MEM 7392
+    setprop ro.BACKUP_APP_MEM 7392
+    setprop ro.HOME_APP_MEM 7392
+    setprop ro.HIDDEN_APP_MEM 14336
+    setprop ro.EMPTY_APP_MEM 16896
 
 on boot
 # Enable ADB
    write /dev/usb_device_mode charge_adb
 
 # Adjust Android LMK
-    write /sys/module/lowmemorykiller/parameters/minfree 3072,4608,7200,11776,17408,21000
+    write /sys/module/lowmemorykiller/parameters/minfree 2464,3712,5632,7392,14336,16896
 
 # USB IPC Power Management Settings
     write /sys/devices/platform/tegra-ehci.2/usb2/2-1/power/autosuspend 2

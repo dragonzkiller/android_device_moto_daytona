@@ -27,8 +27,8 @@ ro.cdma.sms.latin_encode=true
 
 #Define TCP buffer sizes for various networks
 #ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
-net.tcp.buffersize.default 65536,131072,262144,65536,131072,262144
-net.tcp.buffersize.wifi    4095,87380,110208,4096,16384,110208
+net.tcp.buffersize.default 4096,87380,256960,4096,16384,256960
+net.tcp.buffersize.wifi    4096,87380,256960,4096,16384,256960
 net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
 net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
 net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
@@ -61,9 +61,60 @@ persist.tegra.nvlog.level=4
 persist.tegra.drmlib.asfdrm=libnvdrm.so
 Drmdll.asfdrm=libnvdrm.so
 
-# Enable detailed GC data and SMP dexopt
-dalvik.vm.dexopt-flags=m=y,u=n
+# Dalvik VM performance options (some disabled so I can debug)
+dalvik.vm.startheapsize=8m
+dalvik.vm.heapsize=48m
+dalvik.vm.execution-mode=int:jit
+dalvik.vm.stack-trace-file=/data/anr/traces.txt
+dalvik.vm.dexopt-flags=m=v,o=y
+#dalvik.vm.jniopts=warnonly
+dalvik.vm.lockprof.threshold=500
+#dalvik.vm.checkjni=false
+persist.sys.purgeable_assets=1
 
+# Tweak 3g speed
+ro.ril.hsxpa=2
+ro.ril.gprsclass=10
+ro.ril.hep=1
+ro.ril.hsdpa.category=10
+ro.ril.enable.3g.prefix=1
+ro.ril.htcmaskw1.bitmask=4294967295
+ro.ril.htcmaskw1=14449
+ro.ril.hsupa.category=5
+ro.ril.def.agps.mode=2
+ro.ril.def.agps.feature=1
+ro.ril.enable.sdr=1
+ro.ril.enable.gea3=1
+ro.ril.enable.fd.plmn.prefix=23402,23410,23411
+ro.ril.enable.a52=0
+ro.ril.enable.a53=1
+ro.ril.enable.dtm=1
+
+#Battery savers
+pm.sleep_mode=1
+ro.ril.disable.power.collapse=0
+
+#Faster Scrolling
+ro.max.fling_velocity=12000
+ro.min.fling_velocity=8000
+
+#use charge counter for 1% battery
+ro.product.use_charge_counter=1
+
+#Increase the quality of JPEGs
+ro.media.enc.jpeg.quality=100
+
+#Raise Photo and video quality
+ro.media.dec.jpeg.memcap=8000000
+ro.media.enc.hprof.vid.bps=8000000
+
+#Fix some application issues (disabled for now)
+#ro.kernel.android.checkjni=0
+#ro.kernel.checkjni=0
+#ro.config.nocheckin=1
+
+#Keep home locked in memory
+ro.HOME_APP_ADJ=1
 
 persist.sys.usb.config=mass_storage
 
