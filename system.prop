@@ -34,7 +34,7 @@ net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
 net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
 
 # Default network type.
-# 0 -> WCDMA preferred
+# 4 -> CDMA/EVDO Rev. A preferred
 ro.telephony.default_network=4
  
 # Time between scans in seconds. Keep it high to minimize battery drain.
