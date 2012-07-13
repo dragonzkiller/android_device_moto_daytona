@@ -23,6 +23,10 @@ Usage:  img_from_target_files [flags] input_target_files output_image_zip
   -b  (--board_config)  <file>
       Deprecated.
 
+  -z  (--bootable_zip)
+      Include only the bootable images (eg 'boot' and 'recovery') in
+      the output.
+
 """
 
 import sys
@@ -43,6 +47,7 @@ import zipfile
 if not hasattr(os, "SEEK_SET"):
   os.SEEK_SET = 0
 
+import build_image
 import daytona_common as common
 
 OPTIONS = common.OPTIONS
@@ -60,27 +65,48 @@ def AddUserdata(output_zip):
   os.mkdir(user_dir)
   img = tempfile.NamedTemporaryFile()
 
-  build_command = []
-  if OPTIONS.info_dict["fstab"]["/data"].fs_type.startswith("ext"):
-    build_command = ["mkuserimg.sh",
-                     user_dir, img.name,
-                     OPTIONS.info_dict["fstab"]["/data"].fs_type, "data"]
-    if "userdata_size" in OPTIONS.info_dict:
-      build_command.append(str(OPTIONS.info_dict["userdata_size"]))
-  else:
-    build_command = ["mkyaffs2image", "-f"]
-    extra = OPTIONS.info_dict.get("mkyaffs2_extra_flags", None)
-    if extra:
-      build_command.extend(extra.split())
-    build_command.append(user_dir)
-    build_command.append(img.name)
-
-  p = common.Run(build_command)
-  p.communicate()
-  assert p.returncode == 0, "build userdata.img image failed"
+  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
+                                                    "data")
+  fstab = OPTIONS.info_dict["fstab"]
+  if fstab:
+    image_props["fs_type" ] = fstab["/data"].fs_type
+  succ = build_image.BuildImage(user_dir, image_props, img.name)
+  assert succ, "build userdata.img image failed"
 
   common.CheckSize(img.name, "userdata.img", OPTIONS.info_dict)
   output_zip.write(img.name, "userdata.img")
+  img.close()
+  os.rmdir(user_dir)
+  os.rmdir(temp_dir)
+
+
+def AddCache(output_zip):
+  """Create an empty cache image and store it in output_zip."""
+
+  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
+                                                    "cache")
+  # The build system has to explicitly request for cache.img.
+  if "fs_type" not in image_props:
+    return
+
+  print "creating cache.img..."
+
+  # The name of the directory it is making an image out of matters to
+  # mkyaffs2image.  So we create a temp dir, and within it we create an
+  # empty dir named "cache", and build the image from that.
+  temp_dir = tempfile.mkdtemp()
+  user_dir = os.path.join(temp_dir, "cache")
+  os.mkdir(user_dir)
+  img = tempfile.NamedTemporaryFile()
+
+  fstab = OPTIONS.info_dict["fstab"]
+  if fstab:
+    image_props["fs_type" ] = fstab["/cache"].fs_type
+  succ = build_image.BuildImage(user_dir, image_props, img.name)
+  assert succ, "build cache.img image failed"
+
+  common.CheckSize(img.name, "cache.img", OPTIONS.info_dict)
+  output_zip.write(img.name, "cache.img")
   img.close()
   os.rmdir(user_dir)
   os.rmdir(temp_dir)
@@ -108,24 +134,14 @@ def AddSystem(output_zip):
     if (e.errno == errno.EEXIST):
       pass
 
-  build_command = []
-  if OPTIONS.info_dict["fstab"]["/system"].fs_type.startswith("ext"):
-    build_command = ["mkuserimg.sh",
-                     os.path.join(OPTIONS.input_tmp, "system"), img.name,
-                     OPTIONS.info_dict["fstab"]["/system"].fs_type, "system"]
-    if "system_size" in OPTIONS.info_dict:
-      build_command.append(str(OPTIONS.info_dict["system_size"]))
-  else:
-    build_command = ["mkyaffs2image", "-f"]
-    extra = OPTIONS.info_dict.get("mkyaffs2_extra_flags", None)
-    if extra:
-      build_command.extend(extra.split())
-    build_command.append(os.path.join(OPTIONS.input_tmp, "system"))
-    build_command.append(img.name)
-
-  p = common.Run(build_command)
-  p.communicate()
-  assert p.returncode == 0, "build system.img image failed"
+  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
+                                                    "system")
+  fstab = OPTIONS.info_dict["fstab"]
+  if fstab:
+    image_props["fs_type" ] = fstab["/system"].fs_type
+  succ = build_image.BuildImage(os.path.join(OPTIONS.input_tmp, "system"),
+                                image_props, img.name)
+  assert succ, "build system.img image failed"
 
   img.seek(os.SEEK_SET, 0)
   data = img.read()
@@ -142,32 +158,37 @@ def CopyInfo(output_zip):
 
 
 def main(argv):
+  bootable_only = [False]
 
   def option_handler(o, a):
     if o in ("-b", "--board_config"):
       pass       # deprecated
+    if o in ("-z", "--bootable_zip"):
+      bootable_only[0] = True
     else:
       return False
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:",
-                             extra_long_opts=["board_config="],
+                             extra_opts="b:z",
+                             extra_long_opts=["board_config=",
+                                              "bootable_zip"],
                              extra_option_handler=option_handler)
+
+  bootable_only = bootable_only[0]
 
   if len(args) != 2:
     common.Usage(__doc__)
     sys.exit(1)
 
-  OPTIONS.input_tmp = common.UnzipTemp(args[0])
-
-  input_zip = zipfile.ZipFile(args[0], "r")
+  OPTIONS.input_tmp, input_zip = common.UnzipTemp(args[0])
   OPTIONS.info_dict = common.LoadInfoDict(input_zip)
 
   output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED)
 
   AddSystem(output_zip)
   AddUserdata(output_zip)
+  AddCache(output_zip)
   CopyInfo(output_zip)
 
   print "cleaning up..."
@@ -179,6 +200,7 @@ def main(argv):
 
 if __name__ == '__main__':
   try:
+    common.CloseInheritedPipes()
     main(sys.argv[1:])
   except common.ExternalError, e:
     print
