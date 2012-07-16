@@ -151,6 +151,9 @@ PRODUCT_COPY_FILES += \
     device/moto/daytona/keylayout/usb_keyboard_102_en_us.kl:system/usr/keylayout/Motorola_Bluetooth_Wireless_Keyboard.kl \
     device/moto/daytona/keychars/usb_keyboard_102_en_us.kcm.bin:system/usr/keychars/Motorola_Bluetooth_Wireless_Keyboard.kcm.bin
 
+PRODUCT_COPY_FILES += \
+    device/moto/daytona/prebuilts/liba2dp.so:system/lib/liba2dp.so
+
 # Permission files
 PRODUCT_COPY_FILES += \
     frameworks/base/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
