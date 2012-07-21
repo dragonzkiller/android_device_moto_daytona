@@ -97,7 +97,7 @@ static int set_bluetooth_power(int on)
 
   if (fd == -1) 
     {
-      LOGE("Can't open %s for write: %s (%d)", 
+      ALOGE("Can't open %s for write: %s (%d)", 
 	   BLUETOOTH_POWER_PATH, strerror(errno), errno);
       goto out;
     }
@@ -105,7 +105,7 @@ static int set_bluetooth_power(int on)
   sz = write(fd, &buffer, 1);
   if ((sz != 1) && (sz != 0))
     {
-      LOGE("Can't write to %s: %s (%d)", 
+      ALOGE("Can't write to %s: %s (%d)", 
 	   BLUETOOTH_POWER_PATH, strerror(errno), errno);
       goto out;
     }
@@ -121,7 +121,7 @@ static inline int create_hci_sock()
 {
     int sk = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI);
     if (sk < 0) {
-        LOGE("Failed to create bluetooth hci socket: %s (%d)",
+        ALOGE("Failed to create bluetooth hci socket: %s (%d)",
              strerror(errno), errno);
     }
     return sk;
@@ -141,24 +141,24 @@ static int bt_ref_lock()
     /*l_type l_whence l_start l_len l_pid*/
     struct flock fl = {F_WRLCK,    SEEK_SET,  0,        0,      0};
 
-    LOGI("Enter bt_ref_lock");
+    ALOGI("Enter bt_ref_lock");
     if ((bt_ref_fd = open(REF_FILE, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)) == -1)
     {
-        LOGW("open or create bluedroid_ref error");
+        ALOGW("open or create bluedroid_ref error");
         ret = -2;
         goto out;
     }
 
-    LOGI("Trying to get lock ....");
+    ALOGI("Trying to get lock ....");
 
     if (fcntl(bt_ref_fd, F_SETLKW, &fl) == -1)
     {
-        LOGW("F_SETLKW failed");
+        ALOGW("F_SETLKW failed");
         ret = -1;
         goto out;
     }
 
-    LOGI("got lock");
+    ALOGI("got lock");
     ret = 0;
 out:
     return ret;
@@ -167,7 +167,7 @@ out:
 static int bt_ref_unlock()
 {
     int ret = -1;
-    LOGI("Enter bt_ref_unlock");
+    ALOGI("Enter bt_ref_unlock");
     if(bt_ref_fd != -1) close(bt_ref_fd);
     ret = 0;
     return ret;
@@ -179,29 +179,29 @@ static int bt_ref_modify(int change)
     int ret = -1;
     int magic = MAGIC;
 
-    LOGI("Enter bt_ref_modify");
+    ALOGI("Enter bt_ref_modify");
 
     if (change != 1 && change != -1) {
-        LOGE("Invalid change, use only 1 or -1");
+        ALOGE("Invalid change, use only 1 or -1");
         ret = -1;
         goto out;
     }
 
     if (read(bt_ref_fd, (void *)&ref, sizeof(ref)) == -1)
     {
-        LOGW("read reference count error");
+        ALOGW("read reference count error");
         ret = -1;
         goto out;
     }
 
     if(ref.magic != MAGIC)
     {
-        LOGV("reference file magic number is wrong, do reset");
+        ALOGV("reference file magic number is wrong, do reset");
         ref.magic = MAGIC;
         ref.base = 0;
     }
 
-    if(ref.base > 3) LOGE("reference count > 3 base = %d", ref.base);
+    if(ref.base > 3) ALOGE("reference count > 3 base = %d", ref.base);
 
     ref.base += change;
 
@@ -209,19 +209,19 @@ static int bt_ref_modify(int change)
 
     if (write(bt_ref_fd, (const void*)&ref, sizeof(ref)) == -1)
     {
-        LOGE("write reference count failed");
+        ALOGE("write reference count failed");
         ret = -1;
         goto out;
     }
 
     ret = ref.base;
-    LOGI("Exit bt_ref_modify ref = %d", ret);
+    ALOGI("Exit bt_ref_modify ref = %d", ret);
 out:
     return ret;
 }
 
 int bt_enable() {
-    LOGV(__FUNCTION__);
+    ALOGV(__FUNCTION__);
 
     int ret = -1;
     int hci_sock = -1;
@@ -232,19 +232,19 @@ int bt_enable() {
     //1. check whether bt has ben enabled.
     if(bt_is_enabled() == 1)
     {
-        LOGI("bt has been enabled already. inc reference count only");
+        ALOGI("bt has been enabled already. inc reference count only");
         //2. Increase reference count
         refcount = bt_ref_modify(1);
-        LOGV("after inc : reference count = %d", refcount);
+        ALOGV("after inc : reference count = %d", refcount);
         bt_ref_unlock();
         return 0;
     }
 
     if (set_bluetooth_power(1) < 0) goto out;
 
-    LOGI("Starting bt_start");
+    ALOGI("Starting bt_start");
     if (property_set("ctl.start", "bt_start") < 0) {
-      LOGE("Failed to start bt_start");
+      ALOGE("Failed to start bt_start");
       goto out;
     }
 
@@ -260,13 +260,13 @@ int bt_enable() {
         usleep(10000);  // 10 ms retry delay
     }
     if (attempt == 0) {
-        LOGE("%s: Timeout waiting for HCI device to come up", __FUNCTION__);
+        ALOGE("%s: Timeout waiting for HCI device to come up", __FUNCTION__);
         goto out;
     }
 
-    LOGI("Starting bluetoothd daemon");
+    ALOGI("Starting bluetoothd daemon");
     if (property_set("ctl.start", "bluetoothd") < 0) {
-        LOGE("Failed to start bluetoothd");
+        ALOGE("Failed to start bluetoothd");
         goto out;
     }
     sleep(HCID_START_DELAY_SEC);
@@ -280,7 +280,7 @@ out:
     {
         //3. Increase reference count.
         refcount = bt_ref_modify(1);
-        LOGV("after inc : reference count = %d", refcount);
+        ALOGV("after inc : reference count = %d", refcount);
     }
     bt_ref_unlock();
 
@@ -290,13 +290,13 @@ out:
 //////////////////////////////////////////////////////////////////////
 int bt_disable()
 {
-    LOGV(__FUNCTION__);
+    ALOGV(__FUNCTION__);
 
 
     int ret = -1;
     int hci_sock = -1;
 
-    LOGV("bt_disable Entered");
+    ALOGV("bt_disable Entered");
 
     int refcount = 0;
     bt_ref_lock();
@@ -305,19 +305,19 @@ int bt_disable()
     refcount = bt_ref_modify(-1);
 
     //2. Check reference cout
-    LOGV("after dec : reference count = %d", refcount);
+    ALOGV("after dec : reference count = %d", refcount);
     if(refcount > 0)
     {
-        LOGV("bt_disable: other app using bt so just do noting");
+        ALOGV("bt_disable: other app using bt so just do noting");
         bt_ref_unlock();
         return 0;
     }
     //3. If reference cout == 0, disable bt
     //4. bt still used by other app, return then.
 
-    LOGI("Stopping bluetoothd deamon");
+    ALOGI("Stopping bluetoothd deamon");
     if (property_set("ctl.stop", "bluetoothd") < 0) {
-        LOGE("Error stopping bluetoothd");
+        ALOGE("Error stopping bluetoothd");
         goto out;
     }
     usleep(HCID_STOP_DELAY_USEC);
@@ -326,9 +326,9 @@ int bt_disable()
     if (hci_sock < 0) goto out;
     ioctl(hci_sock, HCIDEVDOWN, HCI_DEV_ID);
 
-    LOGI("Starting bt_stop");
+    ALOGI("Starting bt_stop");
     if (property_set("ctl.start", "bt_stop") < 0) {
-        LOGE("Failed to start bt_stop");
+        ALOGE("Failed to start bt_stop");
         goto out;
     }
 
@@ -345,7 +345,7 @@ out:
 
 //////////////////////////////////////////////////////////////////////
 int bt_is_enabled() {
-    LOGV(__FUNCTION__);
+    ALOGV(__FUNCTION__);
 
     int hci_sock = -1;
     int ret = -1;

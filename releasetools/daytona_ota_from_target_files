@@ -348,7 +348,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
   #  ts = GetBuildProp("ro.build.date.utc", input_zip)
   #  script.AssertOlderBuild(ts)
 
-  script.AssertKernelVerison()
+  script.AssertKernelVersion()
 
   if OPTIONS.backuptool:
     script.RunBackup("backup")
@@ -365,7 +365,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.ShowProgress(0.2, 0)
   
   script.UnpackPackageDir("system", "/system")
-  script.ShowProgress(0.3);
+  script.ShowProgress(0.3, 0);
 
   symlinks = CopySystemFiles(input_zip, output_zip)
   script.MakeSymlinks(symlinks)

@@ -196,15 +196,13 @@ class EdifyGenerator(object):
                          (p.fs_type, common.PARTITION_TYPES[p.fs_type],
                           p.device, p.length, p.mount_point))
 
-  def DeleteFiles(self, file_list):
-    """Delete all files in file_list."""
-    if not file_list: return
-    cmd = "delete(" + ",\0".join(['"%s"' % (i,) for i in file_list]) + ");"
-    self.script.append(self._WordWrap(cmd))
-
   def DeleteRecursive(self, tgtpath):
     """Deletes ALL files in a given directory"""
     self.script.append('delete_recursive("%s");' % (tgtpath,))
+
+  def DeleteSingleFile(self, tgtfile):
+    """Deletes a single file"""
+    self.script.append('delete("%s");' % (tgtfile,))
 
   def DeleteFiles(self, file_list):
     """Delete all files in file_list."""

@@ -82,6 +82,7 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += \
     audio.primary.daytona \
+    audio_policy.daytona
 #    camera.daytona \
 #    DaytonaParts
 
@@ -120,7 +121,6 @@ PRODUCT_PACKAGES += \
     Usb \
     CMSettings
 
-
 PRODUCT_PACKAGES += \
     librs_jni \
     com.android.future.usb.accessory \
@@ -128,11 +128,14 @@ PRODUCT_PACKAGES += \
 
 # Board-specific init
 PRODUCT_COPY_FILES += \
+    device/moto/daytona/config/audio_policy.conf:system/etc/audio_policy.conf \
     device/moto/daytona/config/vold.fstab:system/etc/vold.fstab \
     device/moto/daytona/config/apns-conf.xml:system/etc/apns-conf.xml \
     device/moto/daytona/init.vsnet:system/bin/init.vsnet \
     device/moto/daytona/scripts/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
-    #device/moto/daytona/config/media_profiles.xml:system/etc/media_profiles.xml \
+    device/moto/daytona/config/media_profiles.xml:system/etc/media_profiles.xml \
+    device/moto/daytona/config/media_codecs.xml:system/etc/media_codecs.xml \
+    device/moto/daytona/prebuilts/liba2dp.so:system/lib/liba2dp.so \
     device/moto/daytona/scripts/usb_switch.sh:system/bin/usb_switch.sh
 
 #keyboard files
