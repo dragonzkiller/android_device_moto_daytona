@@ -82,7 +82,7 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += \
     audio.primary.daytona \
-    audio_policy.daytona
+#    audio_policy.daytona
 #    camera.daytona \
 #    DaytonaParts
 
