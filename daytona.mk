@@ -26,10 +26,11 @@ DEVICE_PACKAGE_OVERLAYS += device/moto/daytona/overlay
 
 ## (1) First, the most specific values, i.e. the aspects that are specific to CDMA
 # Rootfs
-# there are 3 init.rcs
+# there are 4 init.rcs
 # 1. init.rc: the stock init.rc with mot users
 # 2. init.daytona.rc: our device specific init.rc
 # 3. init.daytona.usb.rc: usb changes for init.rc
+# 4. init.trace.rc: debugging outputs
 PRODUCT_COPY_FILES += \
     device/moto/daytona/root/init.daytona.rc:root/init.daytona.rc \
     device/moto/daytona/root/init.daytona.usb.rc:root/init.daytona.usb.rc \
@@ -82,8 +83,8 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += \
     audio.primary.daytona \
-#    audio_policy.daytona
-#    camera.daytona \
+    camera.daytona \
+    lights.daytona \
 #    DaytonaParts
 
 # BlueZ a2dp Audio HAL module
@@ -113,7 +114,6 @@ PRODUCT_PACKAGES += \
     daytona_releaseutils-tune2fs 
 
 PRODUCT_PACKAGES += \
-    Apollo \
     DockAudio \
     Camera \
     Superuser \
@@ -133,7 +133,6 @@ PRODUCT_COPY_FILES += \
     device/moto/daytona/config/apns-conf.xml:system/etc/apns-conf.xml \
     device/moto/daytona/init.vsnet:system/bin/init.vsnet \
     device/moto/daytona/scripts/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
-    device/moto/daytona/config/media_profiles.xml:system/etc/media_profiles.xml \
     device/moto/daytona/config/media_codecs.xml:system/etc/media_codecs.xml \
     device/moto/daytona/prebuilts/liba2dp.so:system/lib/liba2dp.so \
     device/moto/daytona/scripts/usb_switch.sh:system/bin/usb_switch.sh
