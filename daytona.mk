@@ -84,7 +84,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     audio.primary.daytona \
     camera.daytona \
-    lights.daytona \
+    lights.daytonaa
 #    DaytonaParts
 
 # BlueZ a2dp Audio HAL module
