@@ -34,6 +34,9 @@ on fs
     mount ext3 /dev/block/mmcblk0p12 /system noatime nodiratime wait ro barrier=1
     mount ext3 /dev/block/mmcblk0p16 /data nosuid nodev noatime nodiratime wait barrier=1
     mount ext3 /dev/block/mmcblk0p15 /cache nosuid nodev noatime nodiratime wait barrier=1
+    
+# Recovery on JB is kinda messed up. Make sure /preinstall is already mounted
+    mount ext3 /dev/block/mmcblk0p17 /preinstall nosuid nodev noatime nodiratime wait barrier=1
 
 # Load modules for data usage
 #    insmod /system/lib/modules/xt_quota2.ko
@@ -416,23 +419,37 @@ on property:tcmd.ctrl_adb=0
 #    exec /system/bin/rmmod wl127x_test
 #===================================================================
 
-on property:sys.chargeonly.mode=1
-    class_reset main
-    class_reset late_start
-    class_start charger
+on charger
+    trigger early-fs
+    trigger fs
+    trigger post-fs
+    trigger post-fs-data
+    trigger start-charging
+    
+on start-charging
+# permissions from ICS on are whack
+    chmod 0666 /dev/cpcap
+    chmod 0666 /dev/cpcap_batt
+    chmod 0666 /dev/cpcap_mot_rtc
+    chmod 0666 /dev/cpcap_uc
     start nvrm_daemon
-    start console
     start battd
-    start chargeonly
+    start whisperd
+    start charge_only_mode
+
+on property:sys.chargeonly.mode=1
+    class_stop late_start
+    class_stop main
     stop zygote
+    exec /system/bin/charge_only_mode
+
+service charge_only_mode /sbin/strace -ff -F -tt -s 200 -o /data/trace/charge.pid /system/bin/charge_only_mode
+    user root
+    group graphics system input
+    disabled
     
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd_eth0
-    
-service chargeonly /system/bin/charge_only_mode
-    group root
-    oneshot
-    disabled
 
 service nvrm_daemon /system/bin/logwrapper /system/bin/nvrm_daemon
     class core
