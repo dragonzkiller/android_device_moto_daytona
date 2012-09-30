@@ -328,8 +328,6 @@ on boot
 
 # Load Authentec VPN kernel module
     insmod /system/lib/modules/vpnclient.ko
-    
-    exec /system/bin/sysinit
 
 # Start services
     # we start adb to force it to run for debugging

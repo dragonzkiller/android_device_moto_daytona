@@ -479,5 +479,13 @@
     
     <!-- True will enable the electronbeam screen-off animation. -->
     <bool name="config_screenOffAnimation">true</bool>
-
+    
+     <!-- Enables built-in SIP phone capability -->
+     <bool name="config_built_in_sip_phone">true</bool>
+    <!-- Possible names from /devices/virtual/switch/dock for a dock device.
+         Some kernels use names like CAR and DESK. -->
+    <string-array translatable="false" name="config_accessoryDockNames">
+        <item>"CAR"</item>
+        <item>"DESK"</item>
+    </string-array>
 </resources>

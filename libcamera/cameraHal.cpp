@@ -28,7 +28,7 @@
  */
 
 #define LOG_TAG "CameraHAL"
-#define LOG_NDEBUG 0
+//#define LOG_NDEBUG 0
 
 #include "CameraHardwareInterface.h"
 #include <hardware/hardware.h>
@@ -573,7 +573,7 @@ qcom_camera_store_meta_data_in_buffers(struct camera_device * device, int enable
    /*struct legacy_camera_device *lcdev = to_lcdev(device);
    int ret = lcdev->hwif->storeMetaDataInBuffers(enable);*/
    ALOGV("qcom_camera_store_meta_data_in_buffers:\n");
-   return NO_ERROR;
+   return android::INVALID_OPERATION;
 }
 
 int

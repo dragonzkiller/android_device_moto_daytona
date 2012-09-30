@@ -24,7 +24,6 @@ $(call inherit-product, device/common/gps/gps_us_supl.mk)
 
 DEVICE_PACKAGE_OVERLAYS += device/moto/daytona/overlay
 
-## (1) First, the most specific values, i.e. the aspects that are specific to CDMA
 # Rootfs
 # there are 4 init.rcs
 # 1. init.rc: the stock init.rc with mot users
@@ -42,7 +41,6 @@ PRODUCT_COPY_FILES += \
     device/moto/daytona/root/sbin/taskset:root/sbin/taskset \
     device/moto/daytona/root/sbin/strace:root/sbin/strace
 
-## (2) Also get non-open-source CDMA-specific aspects if available
 $(call inherit-product-if-exists, vendor/moto/daytona/daytona-vendor.mk)
 
 # sysctl conf
@@ -73,9 +71,9 @@ PRODUCT_COPY_FILES += $(shell \
     | tr '\n' ' ')
 
 ifeq ($(TARGET_PREBUILT_KERNEL),)
-	LOCAL_KERNEL := device/moto/daytona/kernel
+        LOCAL_KERNEL := device/moto/daytona/kernel
 else
-	LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
+        LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
 endif
 
 PRODUCT_COPY_FILES += \
@@ -83,8 +81,10 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += \
     audio.primary.daytona \
+    hwcomposer.default \
+    libaudiohw_legacy \
     camera.daytona \
-    lights.daytonaa
+    lights.daytona
 #    DaytonaParts
 
 # BlueZ a2dp Audio HAL module
