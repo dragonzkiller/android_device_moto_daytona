@@ -443,7 +443,7 @@ on property:sys.chargeonly.mode=1
     stop zygote
     exec /system/bin/charge_only_mode
 
-service charge_only_mode /sbin/strace -ff -F -tt -s 200 -o /data/trace/charge.pid /system/bin/charge_only_mode
+service charge_only_mode /system/bin/charge_only_mode
     user root
     group graphics system input
     disabled
