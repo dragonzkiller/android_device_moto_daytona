@@ -48,9 +48,19 @@ BOARD_CUSTOM_GRAPHICS := ../../../device/moto/daytona/recovery/graphics.c
 BOARD_CUSTOM_RECOVERY_KEYMAPPING:= ../../device/moto/daytona/recovery/recovery_ui.c
 BOARD_HAS_SDCARD_INTERNAL := true
 
-#TARGET_KERNEL_SOURCE := kernel/tegra
-#TARGET_KERNEL_CONFIG := tegra_daytona_android_defconfig
+# Kernel configuration for inline building
+TARGET_KERNEL_CONFIG := tegra_daytona_android_defconfig
+TARGET_KERNEL_SOURCE := kernel/tegra
 TARGET_PREBUILT_KERNEL := device/moto/daytona/kernel
+
+DAYTONA_WIFI_MODULE:
+        make -C vendor/bcm/wlan/open-src/src/dhd/linux/ \
+        ARCH="arm" CROSS_COMPILE="arm-eabi-" LINUXSRCDIR=kernel/tegra/ \
+        LINUXBUILDDIR=$(KERNEL_OUT) \
+        LINUXVER=$(shell strings "$(KERNEL_OUT)/vmlinux"|grep '2.6.*MB870'|tail -n1) \
+        BCM_INSTALLDIR="$(ANDROID_BUILD_TOP)/$(KERNEL_MODULES_OUT)"
+
+DAYTONA_KERNEL_MODULES := DAYTONA_WIFI_MODULE
 
 BOARD_KERNEL_CMDLINE :=
 BOARD_KERNEL_BASE := 0x10000000
@@ -102,12 +112,7 @@ BOARD_PREINSTALL_DEVICE := /dev/block/mmcblk0p17
 BOARD_PREINSTALL_FILESYSTEM := ext3
 BOARD_HAS_NO_SELECT_BUTTON := true
 
-BOARD_USES_HW_MEDIARECORDER := true
-BOARD_USES_HW_MEDIASCANNER := false
-BOARD_USES_HW_MEDIAPLUGINS := true
-
 TARGET_USES_GL_VENDOR_EXTENSIONS := true
-TARGET_ELECTRONBEAM_FRAMES := 20
 
 # WiFi
 BOARD_WPA_SUPPLICANT_DRIVER := WEXT
@@ -154,6 +159,9 @@ NEED_WORKAROUND_CORTEX_A9_745320 := true
 
 #HDMI
 BOARD_USES_LGE_HDMI_ROTATION := true
+
+#Camera Overlays
+BOARD_OVERLAY_BASED_CAMERA_HAL := true
 
 # Packaging
 TARGET_PROVIDES_RELEASETOOLS := true

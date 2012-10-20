@@ -41,8 +41,6 @@ PRODUCT_COPY_FILES += \
     device/moto/daytona/root/sbin/taskset:root/sbin/taskset \
     device/moto/daytona/root/sbin/strace:root/sbin/strace
 
-$(call inherit-product-if-exists, vendor/moto/daytona/daytona-vendor.mk)
-
 # sysctl conf
 PRODUCT_COPY_FILES += \
     device/moto/daytona/config/sysctl.conf:system/etc/sysctl.conf
@@ -76,6 +74,10 @@ else
         LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
 endif
 
+$(call inherit-product, device/moto/daytona/hijack/daytona-hijack.mk)
+
+$(call inherit-product, build/target/product/full_base_telephony.mk)
+
 PRODUCT_COPY_FILES += \
     $(LOCAL_KERNEL):kernel
 
@@ -84,8 +86,9 @@ PRODUCT_PACKAGES += \
     hwcomposer.default \
     libaudiohw_legacy \
     camera.daytona \
-    lights.daytona
-#    DaytonaParts
+    lights.daytona \
+    DaytonaParts \
+    HwaSettings
 
 # BlueZ a2dp Audio HAL module
 PRODUCT_PACKAGES += \
@@ -167,10 +170,6 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
-
-$(call inherit-product, device/moto/daytona/hijack/daytona-hijack.mk)
-
-$(call inherit-product, build/target/product/full_base_telephony.mk)
 
 PRODUCT_NAME := generic_daytona
 PRODUCT_DEVICE := daytona

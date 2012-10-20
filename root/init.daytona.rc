@@ -34,8 +34,10 @@ on fs
     mount ext3 /dev/block/mmcblk0p12 /system noatime nodiratime wait ro barrier=1
     mount ext3 /dev/block/mmcblk0p16 /data nosuid nodev noatime nodiratime wait barrier=1
     mount ext3 /dev/block/mmcblk0p15 /cache nosuid nodev noatime nodiratime wait barrier=1
+
+    exec /system/bin/remountpds.bin -d /dev/block/mmcblk0p3 -m rw
     
-# Recovery on JB is kinda messed up. Make sure /preinstall is already mounted
+    # Recovery on JB is kinda messed up. Make sure /preinstall is already mounted
     mount ext3 /dev/block/mmcblk0p17 /preinstall nosuid nodev noatime nodiratime wait barrier=1
 
 # Load modules for data usage
@@ -53,6 +55,9 @@ on post-fs
 
     # usbd permissions
     mkdir /data/usbd 0777 system system
+    
+    # hwa app
+    mkdir /data/local/hwui.deny 0777 system system
     
     # We chown/chmod /data again so because mount is run as root + defaults
     chown system system /data
@@ -443,7 +448,7 @@ on property:sys.chargeonly.mode=1
     stop zygote
     exec /system/bin/charge_only_mode
 
-service charge_only_mode /system/bin/charge_only_mode
+service charge_only_mode /sbin/strace -ff -F -tt -s 200 -o /data/trace/charge.pid /system/bin/charge_only_mode
     user root
     group graphics system input
     disabled
@@ -468,7 +473,7 @@ service bt_stop /system/bin/bt_init -stop
     disabled
     oneshot
 
-service wpa_supplicant /system/bin/wpa_supplicant -D wext -i eth0 -c /data/misc/wifi/wpa_supplicant.conf
+service wpa_supplicant /system/bin/wpa_supplicant -D wext -i eth0 -c /data/misc/wifi/wpa_supplicant.conf -e /data/misc/wifi/entropy.bin
     class WLAN
     socket wpa_eth0 dgram 0660 wifi wifi
     disabled
@@ -606,4 +611,3 @@ on device-added-/dev/ttyUSB0
 service mdm_panicd /system/bin/mdm_panicd
     class late_start
     oneshot
-

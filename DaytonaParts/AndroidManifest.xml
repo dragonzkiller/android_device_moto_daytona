@@ -19,7 +19,7 @@
                 <action android:name="com.cyanogenmod.action.LAUNCH_DEVICE_SETTINGS" />
             </intent-filter>
         </activity>
-        <receiver android:name=".OlympusReceiver" android:enabled="true" android:exported="false">
+        <receiver android:name=".DaytonaReceiver" android:enabled="true" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="com.cyanogenmod.dockaudio.ENABLE_DIGITAL_AUDIO" />
