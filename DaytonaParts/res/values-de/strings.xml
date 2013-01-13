@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Droid X2 Einstellungen</string>
+    <string name="main_title">Motorola Droid X2 Einstellungen</string>
+    <string name="hdmi_audio_title">HDMI Audio</string>
+    <string name="hdmi_audio_summary_on">Audio über HDMI aktiviert</string>
+    <string name="hdmi_audio_summary_off">Audio über HDMI deaktiviert</string>
+    <string name="storage_switch_title">Benutze externen Speicher</string>
+    <string name="storage_switch_summary_off">Benutze internen Speicher für Apps und Medien</string>
+    <string name="storage_switch_summary_on">Benutze Speicherkarte für Apps und Medien</string>
+    <string name="storage_switch_unavailable">Dieses Gerät besitzt keinen erweiterten internen Speicher</string>
+</resources>

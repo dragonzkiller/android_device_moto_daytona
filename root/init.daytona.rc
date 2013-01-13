@@ -16,6 +16,7 @@ on init
     mkdir /storage/sdcard1 0000 system system
     symlink /storage/sdcard0 /sdcard
     symlink /storage/sdcard0 /mnt/sdcard
+    symlink /storage/sdcard1 /external_sd
     mkdir /mnt/usbdisk_1.0 0000 system system
     mkdir /mnt/usbdisk_1.1 0000 system system
     mkdir /mnt/usbdisk_1.2 0000 system system
@@ -34,12 +35,13 @@ on fs
     mount ext3 /dev/block/mmcblk0p12 /system noatime nodiratime wait ro barrier=1
     mount ext3 /dev/block/mmcblk0p16 /data nosuid nodev noatime nodiratime wait barrier=1
     mount ext3 /dev/block/mmcblk0p15 /cache nosuid nodev noatime nodiratime wait barrier=1
-
-    exec /system/bin/remountpds.bin -d /dev/block/mmcblk0p3 -m rw
-    
-    # Recovery on JB is kinda messed up. Make sure /preinstall is already mounted
     mount ext3 /dev/block/mmcblk0p17 /preinstall nosuid nodev noatime nodiratime wait barrier=1
 
+    # Collect apanic data, free resources and re-arm trigger
+    write /proc/apanic /dev/block/mmcblk0p9
+    
+    exec /system/bin/remountpds.bin -d /dev/block/mmcblk0p3 -m rw
+    
 # Load modules for data usage
 #    insmod /system/lib/modules/xt_quota2.ko
 #    insmod /system/lib/modules/xt_qtaguid_print.ko
@@ -52,12 +54,6 @@ on post-fs
     symlink /system/lib /vendor/lib
     # once everything is setup, no need to modify /
     mount rootfs rootfs / ro remount
-
-    # usbd permissions
-    mkdir /data/usbd 0777 system system
-    
-    # hwa app
-    mkdir /data/local/hwui.deny 0777 system system
     
     # We chown/chmod /data again so because mount is run as root + defaults
     chown system system /data
@@ -68,13 +64,13 @@ on post-fs
     chown system system /data/dalvik-cache
     chmod 0771 /data/dalvik-cache
     
-    # create the same dalvik-cache in the /cache directory for CM9  (MAYBE: symlnk it to /data's ?)
+    # create the same dalvik-cache in the /cache directory for CM9  (MAYBE: symlink it to /data's ?)
 #    mkdir /cache/dalvik-cache 0771 system system
     symlink /data/dalvik-cache /cache/dalvik-cache
     chown system system /cache/dalvik-cache
     chmod 0771 /cache/dalvik-cache
     
-    # create the download directory for market
+    # create the download directory for play store
     mkdir /cache/download 0771 system cache
     chown system cache /cache/download
     chmod 0771 /cache/download
@@ -86,10 +82,6 @@ on post-fs
     mkdir /data/dontpanic
     chown root log /data/dontpanic
     chmod 0750 /data/dontpanic
-
-    # Collect apanic data, free resources and re-arm trigger
-
-    write /proc/apanic /dev/block/mmcblk0p9
 
     copy /proc/apanic_console /data/dontpanic/apanic_console
     chown root log /data/dontpanic/apanic_console
@@ -130,10 +122,18 @@ on post-fs-data
     setprop wifi.interface eth0
     setprop softap.interface wl0.1
     
+    # usbd permissions
+    mkdir /data/usbd 0777 system system
+    
+    # hwui blacklist
+    mkdir /data/local/hwui.deny 0775 system system
+    
     # allow net_raw to have access to /dev/socket directory
     # CM feat
     chown root net_raw /dev/socket
     chmod 0775 /dev/socket
+    
+    setprop vold.post_fs_data_done 1
 
 on boot
     # nvrm permissions
@@ -448,7 +448,7 @@ on property:sys.chargeonly.mode=1
     stop zygote
     exec /system/bin/charge_only_mode
 
-service charge_only_mode /sbin/strace -ff -F -tt -s 200 -o /data/trace/charge.pid /system/bin/charge_only_mode
+service charge_only_mode /system/bin/charge_only_mode
     user root
     group graphics system input
     disabled
